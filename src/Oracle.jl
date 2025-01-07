@@ -40,9 +40,13 @@ function __init__()
     # this function is defined in DEPS_FILE
     check_deps()
 
-    # check size of structs affected by C unions
+    # check size of structs affected by C unions. Note that due to - apparently - 
+    # aggressive alignment by Julia, the Julia-size structs may end up being larger on 
+    # certain platforms. With pass-by-value, that is not an issue, as long as Julia 
+    # reserves plenty of space, we should be good. 
+ 
     @assert sizeof(OraDataBuffer) == sizeof_dpiDataBuffer() "OraDataBuffer should have sizeof $(sizeof_dpiDataBuffer()) bytes. Found $(sizeof(OraDataBuffer)) bytes."
-    @assert sizeof(OraData) == sizeof_dpiData() "OraData should have sizeof $(sizeof_dpiData()) bytes. Found $(sizeof(OraData)) bytes."
+    @assert sizeof(OraData) >= sizeof_dpiData() "OraData should have sizeof $(sizeof_dpiData()) bytes. Found $(sizeof(OraData)) bytes."
     @assert sizeof(OraTimestamp) == sizeof_dpiTimestamp() "OraTimestamp should have sizeof $(sizeof_dpiTimestamp()) bytes. Found $(sizeof(OraTimestamp)) bytes."
     @assert sizeof(OraErrorInfo) == sizeof_dpiErrorInfo() "OraErrorInfo should have sizeof $(sizeof_dpiErrorInfo()) bytes. Found $(sizeof(OraErrorInfo)) bytes."
     @assert sizeof(OraCommonCreateParams) == sizeof_dpiCommonCreateParams() "OraCommonCreateParams should have size of $(sizeof_dpiCommonCreateParams()) bytes. Found $(sizeof(OraCommonCreateParams)) bytes."
